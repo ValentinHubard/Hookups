@@ -1,0 +1,28 @@
+<header>
+  <a routerLink="/" class="brand">
+  <img src="/images/hookups-logo.png" class="brand-logo">
+  <span class="brand-name">Hookups</span>
+</a>
+
+  <nav>
+    <a routerLink="/">Accueil</a>
+    <a routerLink="/discover">Découvrir</a>
+
+    @if (isLoggedIn) {
+      <a routerLink="/favorites">Favoris</a>
+      <a routerLink="/messages">Messages</a>
+    } @else {
+      <a routerLink="/about">À propos</a>
+      <a routerLink="/faq">FAQ</a>
+    }
+  </nav>
+
+  <div class="header-actions">
+    @if (isLoggedIn) {
+        <a routerLink="/profile">Mon profil</a>
+    } @else {
+        <a routerLink="/login">Se connecter</a>
+        <a routerLink="/register" class="signup-button">S'inscrire</a>
+    }
+    </div>
+</header>
