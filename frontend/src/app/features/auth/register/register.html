@@ -1,0 +1,215 @@
+<main class="register-page">
+  <section class="register-container">
+
+    <!-- Logo -->
+    <a routerLink="/" class="logo-link" aria-label="Retour à l'accueil">
+      <img
+        src="/images/hookups-logo.png"
+        alt="Hookups"
+        class="register-logo"
+      />
+    </a>
+
+    <h1>Inscrivez-vous maintenant</h1>
+
+    <!-- Formulaire d'inscription -->
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      novalidate
+    >
+      <div class="form-fields">
+
+        <!-- Nom -->
+        <div class="field">
+          <label for="lastName" class="visually-hidden">Nom</label>
+
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            placeholder="Nom"
+            autocomplete="family-name"
+            [class.invalid]="submitted && !!registerForm.get('lastName')?.invalid"
+          />
+
+          @if (submitted && registerForm.get('lastName')?.invalid) {
+            <small class="error">
+              Veuillez saisir votre nom.
+            </small>
+          }
+        </div>
+
+        <!-- Prénom -->
+        <div class="field">
+          <label for="firstName" class="visually-hidden">Prénom</label>
+
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            placeholder="Prénom"
+            autocomplete="given-name"
+            [class.invalid]="submitted && !!registerForm.get('firstName')?.invalid"
+          />
+
+          @if (submitted && registerForm.get('firstName')?.invalid) {
+            <small class="error">
+              Veuillez saisir votre prénom.
+            </small>
+          }
+        </div>
+
+        <!-- Date de naissance -->
+        <div class="field">
+          <label for="birthDate" class="visually-hidden">
+            Date de naissance
+          </label>
+
+          <input
+            id="birthDate"
+            type="date"
+            formControlName="birthDate"
+            autocomplete="bday"
+            [class.invalid]="submitted && !!registerForm.get('birthDate')?.invalid"
+          />
+
+          @if (submitted && registerForm.get('birthDate')?.invalid) {
+            <small class="error">
+              Veuillez renseigner votre date de naissance.
+            </small>
+          }
+        </div>
+
+        <!-- Adresse e-mail -->
+        <div class="field">
+          <label for="email" class="visually-hidden">
+            Adresse e-mail
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="Adresse e-mail"
+            autocomplete="email"
+            [class.invalid]="submitted && !!registerForm.get('email')?.invalid"
+          />
+
+          @if (submitted && registerForm.get('email')?.hasError('required')) {
+            <small class="error">
+              Veuillez saisir votre adresse e-mail.
+            </small>
+          }
+
+          @if (submitted && registerForm.get('email')?.hasError('email')) {
+            <small class="error">
+              Veuillez saisir une adresse e-mail valide.
+            </small>
+          }
+        </div>
+
+        <!-- Mot de passe -->
+        <div class="field password-field">
+          <label for="password" class="visually-hidden">
+            Mot de passe
+          </label>
+
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Mot de passe"
+            autocomplete="new-password"
+            [class.invalid]="submitted && !!registerForm.get('password')?.invalid"
+          />
+
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'Masquer les mots de passe' : 'Afficher les mots de passe'"
+          >
+            {{ showPassword ? 'Masquer' : 'Afficher' }}
+          </button>
+
+          @if (submitted && registerForm.get('password')?.hasError('required')) {
+            <small class="error">
+              Veuillez saisir un mot de passe.
+            </small>
+          }
+
+          @if (submitted && registerForm.get('password')?.hasError('minlength')) {
+            <small class="error">
+              Le mot de passe doit contenir au moins 8 caractères.
+            </small>
+          }
+        </div>
+
+        <!-- Confirmation du mot de passe -->
+        <div class="field">
+          <label for="confirmPassword" class="visually-hidden">
+            Confirmer le mot de passe
+          </label>
+
+          <input
+            id="confirmPassword"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            placeholder="Confirmer le mot de passe"
+            autocomplete="new-password"
+            [class.invalid]="submitted && (!!registerForm.get('confirmPassword')?.invalid || !!registerForm.errors?.['passwordsMismatch'])"
+          />
+
+          @if (submitted && registerForm.get('confirmPassword')?.hasError('required')) {
+            <small class="error">
+              Veuillez confirmer votre mot de passe.
+            </small>
+          }
+
+          @if (submitted && registerForm.errors?.['passwordsMismatch'] && !registerForm.get('confirmPassword')?.hasError('required')) {
+            <small class="error">
+              Les mots de passe ne correspondent pas.
+            </small>
+          }
+        </div>
+
+      </div>
+
+      <!-- Acceptation des conditions -->
+      <div class="terms-container">
+        <label class="terms">
+          <input
+            type="checkbox"
+            formControlName="acceptTerms"
+          />
+
+          <span>
+            En m’inscrivant, j’accepte tous les
+            <a routerLink="/terms">termes et conditions</a>
+            de Hookups.
+          </span>
+        </label>
+
+        @if (submitted && registerForm.get('acceptTerms')?.invalid) {
+          <small class="error terms-error">
+            Vous devez accepter les conditions pour continuer.
+          </small>
+        }
+      </div>
+
+      <!-- Bouton de validation -->
+      <button type="submit" class="continue-button">
+        Continuer
+      </button>
+
+    </form>
+
+    <!-- Lien vers la connexion -->
+    <p class="login-link">
+      Vous avez déjà un compte ?
+      <a routerLink="/login">Connectez-vous</a>
+    </p>
+
+  </section>
+</main>
