@@ -9,6 +9,8 @@ import {
   Validators
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { inject } from '@angular/core';
 
 // Vérifie que les deux mots de passe sont identiques
 function passwordsMatch(
@@ -37,6 +39,7 @@ export class RegisterComponent {
 
   submitted = false;
   showPassword = false;
+  private router = inject(Router);
 
   registerForm: FormGroup;
 
@@ -110,11 +113,13 @@ export class RegisterComponent {
       return;
     }
 
-    // Pour le moment, aucune requête vers le backend.
-    // Nous connecterons ensuite le formulaire à Spring Boot.
+    // Ici, tu pourras envoyer les données d'inscription
+    // à ton backend Spring Boot.
+
     console.log(
       'Formulaire valide',
       this.registerForm.value
     );
+    this.router.navigate(['/onboarding']);
   }
 }

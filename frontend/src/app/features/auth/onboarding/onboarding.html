@@ -1,0 +1,279 @@
+<div class="onboarding-page">
+  <div class="onboarding-card">
+
+    <header class="onboarding-header">
+      <p class="brand">Hookups</p>
+      <h1>Créons ton profil</h1>
+      <p class="subtitle">
+        Quelques informations pour trouver tes prochains partenaires sportifs.
+      </p>
+
+      <div class="progress">
+        <div
+          class="progress-bar"
+          [style.width.%]="(currentStep / 4) * 100"
+        ></div>
+      </div>
+
+      <p class="step-indicator">Étape {{ currentStep }} sur 4</p>
+    </header>
+
+    <!-- ÉTAPE 1 : GENRE -->
+    @if (currentStep === 1) {
+      <section class="step-content">
+        <h2>Comment te définis-tu ?</h2>
+        <p class="step-description">
+          Choisis une option pour continuer.
+        </p>
+
+        <div class="choice-list">
+          <button
+            type="button"
+            class="choice-button"
+            [class.selected]="gender === 'Homme'"
+            (click)="selectGender('Homme')"
+          >
+            <span>Homme</span>
+            <span class="choice-check">✓</span>
+          </button>
+
+          <button
+            type="button"
+            class="choice-button"
+            [class.selected]="gender === 'Femme'"
+            (click)="selectGender('Femme')"
+          >
+            <span>Femme</span>
+            <span class="choice-check">✓</span>
+          </button>
+
+          <button
+            type="button"
+            class="choice-button"
+            [class.selected]="gender === 'Autre'"
+            (click)="selectGender('Autre')"
+          >
+            <span>Autre</span>
+            <span class="choice-check">✓</span>
+          </button>
+        </div>
+
+        @if (genderError) {
+          <p class="error-message">
+            Sélectionne un genre pour continuer.
+          </p>
+        }
+      </section>
+    }
+
+    <!-- ÉTAPE 2 : SPORTS -->
+    @if (currentStep === 2) {
+      <section class="step-content">
+        <h2>Quels sports pratiques-tu ?</h2>
+        <p class="step-description">
+          Sélectionne au moins un sport. Tu peux en choisir plusieurs.
+        </p>
+
+        <div class="sports-grid">
+          @for (sport of availableSports; track sport) {
+            <button
+              type="button"
+              class="sport-button"
+              [class.selected]="isSportSelected(sport)"
+              [attr.aria-pressed]="isSportSelected(sport)"
+              (click)="toggleSport(sport)"
+            >
+              <span>{{ sport }}</span>
+
+              @if (isSportSelected(sport)) {
+                <span class="sport-check">✓</span>
+              }
+            </button>
+          }
+        </div>
+
+        <p class="selection-count">
+          {{ sports.length }} sport(s) sélectionné(s)
+        </p>
+
+        @if (sportsError) {
+          <p class="error-message">
+            Sélectionne au moins un sport pour continuer.
+          </p>
+        }
+      </section>
+    }
+
+    <!-- ÉTAPE 3 : ADRESSE -->
+    @if (currentStep === 3) {
+      <section class="step-content">
+        <h2>Où te situes-tu ?</h2>
+        <p class="step-description">
+          Saisis ton adresse et sélectionne un résultat proposé.
+        </p>
+
+        <div class="profile-field address-field">
+          <label for="location">Adresse</label>
+
+          <input
+            id="location"
+            type="text"
+            placeholder="Ex. : 10 rue de la Paix, Paris"
+            autocomplete="off"
+            [value]="location"
+            (input)="searchAddress($event)"
+          />
+
+          @if (addressLoading) {
+            <p class="address-message">Recherche des adresses...</p>
+          }
+
+          @if (addressSuggestions.length > 0) {
+            <ul class="address-suggestions">
+              @for (address of addressSuggestions; track address.label) {
+                <li>
+                  <button
+                    type="button"
+                    (click)="chooseAddress(address)"
+                  >
+                    {{ address.label }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+
+          @if (selectedAddress) {
+            <p class="address-success">
+              ✓ Adresse sélectionnée : {{ selectedAddress.label }}
+            </p>
+          }
+
+          @if (addressError) {
+            <p class="error-message">{{ addressError }}</p>
+          }
+
+          <p class="field-hint">
+            Choisis un résultat dans la liste pour valider cette étape.
+          </p>
+        </div>
+      </section>
+    }
+
+    <!-- ÉTAPE 4 : PROFIL FACULTATIF -->
+    @if (currentStep === 4) {
+      <section class="step-content">
+        <h2>Personnalise ton profil</h2>
+        <p class="step-description">
+          Ces informations sont facultatives. Tu peux passer cette étape.
+        </p>
+
+        <div class="profile-field">
+          <label for="photo">Photo de profil (facultatif)</label>
+
+          <div class="photo-upload">
+            @if (photoPreview) {
+              <img
+                class="photo-preview"
+                [src]="photoPreview"
+                alt="Aperçu de la photo de profil"
+              />
+            } @else {
+              <div class="photo-placeholder">
+                <span class="photo-icon">＋</span>
+                <span>Ajouter une photo</span>
+              </div>
+            }
+
+            <input
+              id="photo"
+              type="file"
+              accept="image/*"
+              (change)="onPhotoSelected($event)"
+            />
+          </div>
+
+          <p class="field-hint">Image de 5 Mo maximum.</p>
+
+          @if (photoError) {
+            <p class="error-message">{{ photoError }}</p>
+          }
+
+          @if (photoPreview) {
+            <button
+              type="button"
+              class="remove-photo-button"
+              (click)="removePhoto()"
+            >
+              Supprimer la photo
+            </button>
+          }
+        </div>
+
+        <div class="profile-field">
+          <label for="description">Description (facultatif)</label>
+
+          <textarea
+            id="description"
+            rows="4"
+            maxlength="500"
+            placeholder="Parle un peu de toi et de tes objectifs sportifs..."
+            [value]="description"
+            (input)="onDescriptionInput($event)"
+          ></textarea>
+
+          <p class="field-hint">
+            {{ description.length }}/500 caractères
+          </p>
+        </div>
+
+        <div class="profile-field">
+          <label for="phone">Téléphone (facultatif)</label>
+
+          <input
+            id="phone"
+            type="tel"
+            autocomplete="tel"
+            placeholder="Ex. : 06 12 34 56 78"
+            [value]="phone"
+            (input)="onPhoneInput($event)"
+          />
+        </div>
+      </section>
+    }
+
+    <!-- NAVIGATION -->
+    <footer class="onboarding-footer">
+      @if (currentStep > 1) {
+        <button
+          type="button"
+          class="back-button"
+          (click)="previousStep()"
+        >
+          Retour
+        </button>
+      } @else {
+        <span></span>
+      }
+
+      @if (currentStep < 4) {
+        <button
+          type="button"
+          class="continue-button"
+          (click)="nextStep()"
+        >
+          Continuer
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="continue-button"
+          (click)="finishOnboarding()"
+        >
+          Terminer
+        </button>
+      }
+    </footer>
+
+  </div>
+</div>
