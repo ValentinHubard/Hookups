@@ -23,8 +23,8 @@ public class UserSport {
     @JoinColumn(name = "sport_id", nullable = false)
     private Sport sport;
 
-    @Column(nullable = false)
-    private String level;
+    // @Column(nullable = false)
+    // private String level;
 
     public UserSport() {
     }
@@ -41,9 +41,9 @@ public class UserSport {
         return sport;
     }
 
-    public String getLevel() {
-        return level;
-    }
+    // public String getLevel() {
+    //     return level;
+    // }
 
     public void setUser(User user) {
         this.user = user;
@@ -53,7 +53,7 @@ public class UserSport {
         this.sport = sport;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
-    }
+    // public void setLevel(String level) {
+    //     this.level = level;
+    // }
 }
