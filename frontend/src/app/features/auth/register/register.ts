@@ -11,6 +11,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
+import { RegistrationStateService } from '../../../core/services/registration-state.service';
 
 // Vérifie que les deux mots de passe sont identiques
 function passwordsMatch(
@@ -40,6 +41,7 @@ export class RegisterComponent {
   submitted = false;
   showPassword = false;
   private router = inject(Router);
+  private registrationState = inject(RegistrationStateService);
 
   registerForm: FormGroup;
 
@@ -113,13 +115,16 @@ export class RegisterComponent {
       return;
     }
 
-    // Ici, tu pourras envoyer les données d'inscription
-    // à ton backend Spring Boot.
+    const form = this.registerForm.getRawValue();
 
-    console.log(
-      'Formulaire valide',
-      this.registerForm.value
-    );
+    this.registrationState.setData({
+      email: form.email,
+      password: form.password,
+      firstName: form.firstName,
+      lastName: form.lastName,
+      birthday: form.birthDate
+    });
+
     this.router.navigate(['/onboarding']);
   }
 }

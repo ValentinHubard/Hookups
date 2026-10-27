@@ -15,6 +15,8 @@ public class Sport {
 
     private String description;
 
+    private String imageUrl;
+
     public Sport() {
     }
 
@@ -35,11 +37,19 @@ public class Sport {
         return description;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setImage(String Url) {
+        this.imageUrl = Url;
     }
 }
