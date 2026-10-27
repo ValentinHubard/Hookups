@@ -26,6 +26,7 @@ public class SecurityConfig {
             throws Exception {
 
         http
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sports").permitAll()

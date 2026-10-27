@@ -1,6 +1,8 @@
-import { Component, OnDestroy, inject } from '@angular/core';
+import { Component, OnDestroy, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Sport } from '../../../core/models/sport';
+import { SportService } from '../../../core/services/sport.service';
 
 interface AddressSuggestion {
   label: string;
@@ -14,9 +16,10 @@ interface AddressSuggestion {
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.scss'
 })
-export class OnboardingComponent implements OnDestroy {
+export class OnboardingComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private sportService = inject(SportService);
 
   // Navigation
   currentStep = 1;
@@ -26,23 +29,21 @@ export class OnboardingComponent implements OnDestroy {
   genderError = false;
 
   // Étape 2 : sports
-  sports: string[] = [];
+  availableSports: Sport[] = [];
+  selectedSportIds: number[] = [];
   sportsError = false;
 
-  readonly availableSports = [
-    'Football',
-    'Basketball',
-    'Tennis',
-    'Running',
-    'Musculation',
-    'Natation',
-    'Cyclisme',
-    'Badminton',
-    'Volleyball',
-    'Escalade',
-    'Rugby',
-    'Danse'
-  ];
+  ngOnInit(): void {
+    this.sportService.getAllSports().subscribe({
+      next: (sports) => {
+        this.availableSports = sports;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des sports', error);
+      }
+    });
+  }
+
 
   // Étape 3 : adresse
   location = '';
@@ -65,18 +66,20 @@ export class OnboardingComponent implements OnDestroy {
   }
 
   // Sports
-  toggleSport(sport: string): void {
-    if (this.sports.includes(sport)) {
-      this.sports = this.sports.filter(item => item !== sport);
+  toggleSport(sportId: number): void {
+    if (this.selectedSportIds.includes(sportId)) {
+      this.selectedSportIds = this.selectedSportIds.filter(
+        id => id !== sportId
+      );
     } else {
-      this.sports = [...this.sports, sport];
+      this.selectedSportIds = [...this.selectedSportIds, sportId];
     }
 
-    this.sportsError = false;
+    this.sportsError = this.selectedSportIds.length === 0;
   }
 
-  isSportSelected(sport: string): boolean {
-    return this.sports.includes(sport);
+  isSportSelected(sportId: number): boolean {
+    return this.selectedSportIds.includes(sportId);
   }
 
   // Recherche d'adresses avec l'API de géocodage
@@ -143,7 +146,7 @@ export class OnboardingComponent implements OnDestroy {
     }
 
     if (this.currentStep === 2) {
-      if (this.sports.length === 0) {
+      if (this.selectedSportIds.length === 0) {
         this.sportsError = true;
         return;
       }
@@ -222,7 +225,7 @@ export class OnboardingComponent implements OnDestroy {
   finishOnboarding(): void {
     const profile = {
       gender: this.gender,
-      sports: this.sports,
+      sportIds: this.selectedSportIds,
       location: this.selectedAddress?.label ?? '',
       coordinates: this.selectedAddress?.coordinates ?? null,
       description: this.description,

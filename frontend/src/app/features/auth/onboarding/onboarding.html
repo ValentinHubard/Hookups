@@ -75,17 +75,25 @@
         </p>
 
         <div class="sports-grid">
-          @for (sport of availableSports; track sport) {
+          @for (sport of availableSports; track sport.id) {
             <button
               type="button"
               class="sport-button"
-              [class.selected]="isSportSelected(sport)"
-              [attr.aria-pressed]="isSportSelected(sport)"
-              (click)="toggleSport(sport)"
+              [class.selected]="isSportSelected(sport.id)"
+              [attr.aria-pressed]="isSportSelected(sport.id)"
+              (click)="toggleSport(sport.id)"
             >
-              <span>{{ sport }}</span>
+              @if (sport.imageUrl) {
+                <img
+                  [src]="sport.imageUrl"
+                  [alt]="sport.name"
+                  class="sport-image"
+                />
+              }
 
-              @if (isSportSelected(sport)) {
+              <span>{{ sport.name }}</span>
+
+              @if (isSportSelected(sport.id)) {
                 <span class="sport-check">✓</span>
               }
             </button>
@@ -93,7 +101,7 @@
         </div>
 
         <p class="selection-count">
-          {{ sports.length }} sport(s) sélectionné(s)
+          {{ selectedSportIds.length }} sport(s) sélectionné(s)
         </p>
 
         @if (sportsError) {
